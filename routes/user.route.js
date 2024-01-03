@@ -1,81 +1,50 @@
-// .......................Import the Todo model....................//
+const express=require("express");
+const { User } = require("../model/user.model");
+const jwt=require("jsonwebtoken")
+const bcrypt=require("bcrypt")
+const userRouter=express.Router();
 
-const express = require("express");
-const router = express.Router();
-const { Todo } = require("../model/todo.model"); 
 
-//.......................... Create a new todo................................//
 
-router.post("/create", async (req, res) => {
-  try {
-    const { title, description, completed } = req.body;
-    const todo = new Todo({ title, description, completed });
-    const newTodo = await todo.save();
-    res.json(newTodo);
-  } catch (error) {
-    res.status(500).json({ error: "Unable to create a new todo." });
-  }
-});
-
-// ..........................Get all todos........................................//
-
-router.get("/find", async (req, res) => {
-  try {
-    const todos = await Todo.find();
-    res.json(todos);
-  } catch (error) {
-    res.status(500).json({ error: "Unable to fetch todos." });
-  }
-});
-
-// ...............................Get a single todo by ID................................//
-
-router.get("/find:id", async (req, res) => {
-  try {
-    const todo = await Todo.findById(req.params.id);
-    if (!todo) {
-      return res.status(404).json({ error: "Todo not found." });
-    }
-    res.json(todo);
-  } catch (error) {
-    res.status(500).json({ error: "Unable to fetch the todo." });
-  }
-});
-
-//..........................Update a todo by ID..............................//
-
-router.put("/update/:id", async (req, res) => {
+///........................Reister user.....................//
+userRouter.post("/register",async(req,res)=>{
+    const {name,email,password}=req.body;
     try {
-      const { title, description } = req.body;
-      const updatedTodo = await Todo.findByIdAndUpdate(req.params.id, {
-        title,
-        description,
-      });
-  
-      if (!updatedTodo) {
-        return res.status(404).json({ error: "Todo not found." });
-      }
-  
-      res.status(200).json({ message: 'Todo updated successfully' });
+        const hashedPassword = await bcrypt.hash(password, 5);
+        let user=new User({name,email,password:hashedPassword})
+        await user.save()    
+        res.status(201).send({msg:"User Registered Successfully"})
     } catch (error) {
-      res.status(500).json({ message: 'Failed to update todo' });
+        console.log(error)
+        res.send({msg:"something went wrong",error})
     }
-  });
+})
 
+//.......................login user................//
 
-
-//.........................Delete a todo by ID...............................//
-
-router.delete("/delete/:id", async (req, res) => {
-  try {
-    const todo = await Todo.findByIdAndRemove(req.params.id);
-    if (!todo) {
-      return res.status(404).json({ error: "Todo not found." });
+userRouter.post("/login",async(req,res)=>{
+    const {email,password}=req.body;
+    try {
+        const user=await User.find({email})
+        if(user.length>0){
+            bcrypt.compare(password,user[0].password,(err,result)=>{
+                if(result){
+                    const token=jwt.sign({email:email,userid:user[0]._id},"masai")
+                    res.send({"msg":'logged in',token:token})
+                }else{
+                    res.send({msg:"something went wrong"})
+                }
+            })
+        }else{
+            res.send({"msg":"wrong credentials"})
+        }
+    } catch (error) {
+        res.send({msg:"something went wrong",error:error.message})
     }
-    res.json({ message: "Todo deleted successfully." });
-  } catch (error) {
-    res.status(500).json({ error: "Unable to delete the todo." });
-  }
-});
+})
 
-module.exports = {router};
+ 
+ //........export model.....//
+module.exports={
+    userRouter
+}
