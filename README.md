@@ -116,43 +116,43 @@ Things to do before starting the server:-
     <tbody>
         <tr>
             <td>POST</td>
-            <td>/signup</td>
+            <td>/api/register</td>
             <td>This endpoint should allow users to register</td>
             <td>201</td>
         </tr>
         <tr>
             <td>POST</td>
-            <td>/login</td>
+            <td>/api/login</td>
             <td>This endpoint should allow users to login.</td>
             <td>200</td>
         </tr>
         <tr>
             <td>POST</td>
-            <td>/createTodo</td>
+            <td>/api/create</td>
             <td>This endpoint is used to create new Todo  if valid token present in headers authorization with Bearer</td>
             <td>201</td>
         </tr>
          <tr>
             <td>GET</td>
-            <td>/getTodoList</td>
+            <td>/api/find:id</td>
             <td>This endpoint is used to get Todo list of authorized user if valid token present in headers authorization with Bearer</td>
             <td>200</td>
         </tr>
          <tr>
             <td>PUT</td>
-            <td>/updateTodo/:id</td>
+            <td>/api/update/:id</td>
             <td>This endpoint is used to update Todo of authorized user by Todo id if valid token present in headers authorization with Bearer</td>
             <td>201</td>
         </tr>
         <tr>
             <td>DELETE</td>
-            <td>/deleteTodo/:id</td>
+            <td>/api/delete/:id</td>
             <td>This endpoint is used delete todo of authorized user if valid token present in headers authorization with Bearer</td>
             <td>200</td>
         </tr>
          <tr>
             <td>GET</td>
-            <td>/getAllTodo</td>
+            <td>/api/find</td>
             <td>This endpoint is used get all todo of all users if valid token present in headers authorization with Bearer</td>
             <td>200</td>
         </tr>
@@ -162,4 +162,5 @@ Things to do before starting the server:-
 
 
 <br>
+
 
